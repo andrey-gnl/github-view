@@ -1,19 +1,15 @@
 import {getRepo} from './repo';
+import {BODY} from '../const';
 import state from '../state';
 
 const createList = () => `<div class="list" id="list">${addRepos()}</div>`;
 
 const addRepos = (repos = state.cards) => {
-  // const listEl = document.getElementById('list');
-  let cards = '';
-  // console.log(repos);
-  repos.forEach(repo => cards += `<div class="list__item">${getRepo(repo)}</div>`);
-  return cards;
+  return repos.reduce((result, repo) => result += `<div class="list__item">${getRepo(repo)}</div>`, '');
 };
 
 export const addMoreRepos = (repos) => {
   const content = document.getElementById('list');
-
   content.insertAdjacentHTML('beforeEnd', addRepos(repos));
 };
 
@@ -22,30 +18,25 @@ export const resetRepos = (newRepos = state.cards) => {
 
   content.innerHTML = '';
   content.insertAdjacentHTML('beforeEnd', addRepos(newRepos));
-
 };
 
 export const sortRepos = (params = state.sortingParams) => {
   const repos = state.cards;
   const {order, type} = params;
-  console.log('type', type);
-  const sortedCards = type !== 'updated_at' ? repos.sort((a,b) => a[type] - b[type]) : repos.sort((a,b) => new Date(a[type]) - new Date(b[type]));
+
+  const sortedCards = type !== 'updated_at'
+    ? repos.sort((a,b) => a[type] - b[type])
+    : repos.sort((a,b) => new Date(a[type]) - new Date(b[type]));
 
   if(order === 'descending') sortedCards.reverse();
 
   state.cards = sortedCards;
-
-  if(state.filterParams) {
-    filterRepos();
-  } else {
-    resetRepos();
-  }
+  state.filterParams ? filterRepos() : resetRepos();
 };
 
 export const filterRepos = (params = state.filterParams) => {
   const {has_issues, stargazers_count, topics, date, language, type} = params;
   const repos = state.cards;
-
   const filteredRepos = repos.filter(repo => {
     return (has_issues ? !!repo.open_issues_count : true)
       && repo.stargazers_count >= stargazers_count
@@ -54,6 +45,8 @@ export const filterRepos = (params = state.filterParams) => {
       && ( language !== 'all' ? repo.language === language : true)
       && ( type !== 'all' ? repo[type] : true);
   });
+  language !== 'all' ? BODY.classList.add('is-lang-filter') : BODY.classList.remove('is-lang-filter');
+  type !== 'all' ? BODY.classList.add('is-type-filter') : BODY.classList.remove('is-type-filter');
   state.filteredRepos = filteredRepos;
 
   resetRepos(filteredRepos);

@@ -48,3 +48,26 @@ export const handleErrors = (response) => {
   }
   return response;
 };
+
+export const roundNum = (number, floats = 2) => {
+  var abbrev = [ 'k', 'm', 'b', 't' ];
+  floats = Math.pow(10,floats);
+
+  for (let i = abbrev.length-1; i >= 0; i--) {
+
+    let size = Math.pow(10,(i+1)*3);
+
+    if(size <= number) {
+      number = Math.round(number*floats/size)/floats;
+
+      if((+number === 1000) && (i < abbrev.length - 1)) {
+        number = 1;
+        i++;
+      }
+      number += abbrev[i];
+      break;
+    }
+  }
+
+  return number;
+};

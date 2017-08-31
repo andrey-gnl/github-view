@@ -1,9 +1,12 @@
 import state from '../state';
 import repoList from './repoList';
-import {formSerialize, getArrayOfFieldsValue} from '../utils';
+import {formSerialize} from '../utils';
 
-export const templateInit = () => `
-  <div class="forms">
+let inited = false;
+
+export const templateInit = () => {
+  inited = true;
+  return `<div class="forms">
     <form class="form" id="form-filters">
       <h2 class="h2">Filters</h2>
       <div class="form-group">
@@ -92,6 +95,14 @@ export const templateInit = () => `
     </form>
   </div>
 `;
+};
+
+export const reset = () => {
+  const formFilters = document.getElementById('form-filters');
+  const formSorting = document.getElementById('form-sorting');
+  formFilters.reset();
+  formSorting.reset();
+};
 
 export const updateLangSelect = (newLangs) => {
   const select = document.getElementById('lang-select');
@@ -119,7 +130,6 @@ const handleChangeFilters = (e) => {
 
   state.filterParams = serialize;
   repoList.filterRepos();
-
 };
 
 const handleChangeSorting = (e) => {
@@ -129,4 +139,4 @@ const handleChangeSorting = (e) => {
   repoList.sortRepos();
 };
 
-export default {init, templateInit, updateLangSelect};
+export default {init, templateInit, updateLangSelect, inited, reset};

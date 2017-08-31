@@ -1,3 +1,4 @@
 import './fetchRepos';
-import './loadMore';
+import './Pagination';
+import './Modal';
 

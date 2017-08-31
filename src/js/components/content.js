@@ -5,7 +5,7 @@ const content = document.getElementById('content');
 
 const init = () => {
   content.innerHTML = '';
-  content.insertAdjacentHTML('beforeEnd', forms.templateInit());
+  forms.inited ? forms.reset() : content.insertAdjacentHTML('beforeEnd', forms.templateInit());
   content.insertAdjacentHTML('beforeEnd', repos.createList());
 
   forms.init();

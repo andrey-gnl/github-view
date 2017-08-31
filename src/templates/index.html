@@ -1,22 +1,20 @@
 --- title: Kottans Test Task --- {% extends "layouts/_layout.html" %} {% block content %}
 
 <div class="container" id="app">
-  <form class="form-start" id="getReposForm">
+  <form class="form-start" id="get-repos-form">
     <div class="form-start__field">
       <div class="form-start__input">
-        <input type="text" class="input" id="ownerName">
+        <input type="text" class="input" id="owner-name">
       </div>
       <div class="form-start__btn">
-        <button type="submit" class="btn" id="getRepos">Go!</button>
+        <button type="submit" class="btn" id="get-repos">Go!</button>
       </div>
     </div>
   </form>
 
   <div class="content" id="content"></div>
 
-  <div class="pagination" id="pagination">
-    <button type="button" class="btn" id="load-more">Load more</button>
-  </div>
+  <div class="pagination" id="pagination"></div>
 </div>
 
 {% endblock %}
