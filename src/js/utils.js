@@ -41,3 +41,10 @@ export const getArrayOfFieldsValue = (array, fieldName) => {
 };
 
 export const uniqueArray = (array) => array.filter((el, i, a) => i === a.indexOf(el));
+
+export const handleErrors = (response) => {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+  return response;
+};

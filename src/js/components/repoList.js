@@ -43,7 +43,7 @@ export const sortRepos = (params = state.sortingParams) => {
 };
 
 export const filterRepos = (params = state.filterParams) => {
-  const {has_issues, stargazers_count, topics, date, language} = params;
+  const {has_issues, stargazers_count, topics, date, language, type} = params;
   const repos = state.cards;
 
   const filteredRepos = repos.filter(repo => {
@@ -51,12 +51,25 @@ export const filterRepos = (params = state.filterParams) => {
       && repo.stargazers_count >= stargazers_count
       && (topics ? !!repo.topics.length: true)
       && (date !== 'none' ? repo.updated_at > date : true)
-      && ( language !== 'all' ? repo.language === language : true);
+      && ( language !== 'all' ? repo.language === language : true)
+      && ( type !== 'all' ? repo[type] : true);
   });
-  // console.log(filteredRepos);
   state.filteredRepos = filteredRepos;
 
   resetRepos(filteredRepos);
+  updateCount();
+};
+
+const updateCount = () => {
+  let count = document.getElementById('count');
+
+  if (!count) {
+    document
+      .querySelector('#form-filters h2')
+      .insertAdjacentHTML('beforeEnd', '<span id="count"></span>');
+    count = document.getElementById('count');
+  }
+  count.innerHTML = `${state.filteredRepos.length} <em>/ ${state.cards.length}</em>`;
 };
 
 export default { createList, addMoreRepos, sortRepos, filterRepos };

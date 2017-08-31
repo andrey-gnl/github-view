@@ -1,1 +1,1 @@
-export const REPOSITORY_SET = 30;
+export const BODY = document.querySelector('body');

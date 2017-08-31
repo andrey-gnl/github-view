@@ -48,7 +48,7 @@ export const templateInit = () => `
             <span>Type:</span>
             <select name="type">
               <option value="all">All</option>
-              <option value="forks">Forks</option>
+              <option value="fork">Forks</option>
               <option value="sources">Sources</option>
             </select>
           </label>
@@ -119,6 +119,7 @@ const handleChangeFilters = (e) => {
 
   state.filterParams = serialize;
   repoList.filterRepos();
+
 };
 
 const handleChangeSorting = (e) => {

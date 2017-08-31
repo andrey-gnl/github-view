@@ -1,0 +1,39 @@
+.info
+	&:not(:last-child)
+		margin-bottom: 10px
+	a
+		color: #00bdff
+		text-decoration: none
+		transition: color .3s
+		&:hover
+			color: darken(#00bdff, 10%)
+	ol
+		li
+			&:not(:last-child)
+				margin-bottom: 10px
+	&__property
+		margin-bottom: 10px
+	&__value
+		padding-left: 20px
+	&__row
+		+clr
+		padding: 10px 0
+	&__cell
+		float: left
+		width: 50%
+	&__value
+		ol
+			padding-left: 15px
+	&__name
+		position: relative
+		padding-left: 40px
+		text-decoration: none
+	&__img
+		position: absolute
+		left: 0
+		top: 50%
+		margin-top: -15px
+		width: 30px
+		height: 30px
+		border-radius: 50%
+		background: center center / cover no-repeat
