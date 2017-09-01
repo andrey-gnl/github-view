@@ -1,5 +1,5 @@
 import state from '../state';
-import {handleErrors} from '../utils';
+import {handleErrors, convertBytes, objectIsEmpty} from '../utils';
 import {BODY} from '../const';
 
 BODY.addEventListener('click', function(e) {
@@ -36,20 +36,27 @@ class Modal {
       .then(handleErrors)
       .then((response) => response.json())
       .then((repository) => {
-        const { full_name, html_url, fork, name, parent, contributors_url } = repository;
-        Object.assign(data, { full_name, html_url, fork, name, parent, contributors_url });
+        const { full_name, html_url, fork, name, parent, contributors_url, languages_url } = repository;
+        Object.assign(data, { full_name, html_url, fork, name, parent, contributors_url, languages_url });
         return fetch(contributors_url);
       })
       .then(handleErrors)
       .then((response) => response.json())
       .then((contributors) => {
         Object.assign(data, { contributors });
-        return fetch(`https://api.github.com/repos/${state.ownerName}/${repo.name}/pulls?sort=popularity&per_page=5&type=open`);
+        return fetch(`https://api.github.com/repos/${state.ownerName}/${repo.name}/pulls?sort=popularity&per_page=5&type=open&direction=desc`);
       })
       .then(handleErrors)
       .then((response) => response.json())
       .then((pulls) => {
-        Object.assign(data, { pulls: pulls.reverse() });
+        Object.assign(data, { pulls });
+
+        return fetch(data.languages_url);
+      })
+      .then(handleErrors)
+      .then((response) => response.json())
+      .then((langs) => {
+        Object.assign(data, { langs });
         target.classList.remove('loading');
         Modal.loading = false;
         Modal.exists = true;
@@ -64,7 +71,8 @@ class Modal {
       });
   }
 
-  _getModal({full_name, html_url, fork, parent, contributors, pulls}) {
+  _getModal({full_name, html_url, fork, parent, contributors, pulls, langs}) {
+    console.log(langs);
     return `<div class="modal" id="modal">
     <div class="modal__inner">
 
@@ -100,6 +108,12 @@ class Modal {
         </div>
       </div>
       <div class="info">
+        <div class="info__property">Languages</div>
+        <div class="info__value">
+          ${this._getLangs(langs)}
+        </div>
+      </div>
+      <div class="info">
         <div class="info__property">Most commented PRs</div>
         <div class="info__value">
           ${this._getPulls(pulls)}
@@ -110,11 +124,30 @@ class Modal {
   </div>`;
   };
 
+  _getLangs(langs) {
+    if(objectIsEmpty(langs)) return 'there are no langs... :(';
+
+    let template = Object.keys(langs).reduce((template,lang) => {
+      const size = langs[lang];
+
+      if (size > 1024) {
+        return template += `<div class="info__row">
+          <div class="info__cell">${lang}</div>
+          <div class="info__cell">${convertBytes(size)}</div>
+        </div>`;
+      }
+
+      return template;
+    }, '');
+
+    return template ? template : 'langs are less than 1 KB :(';
+  }
+
   _getContributors(contributors) {
     const amount = contributors.length >= 3 ? 3 : contributors.length;
     let template = '';
 
-    if (!amount) return 'there is no contributors... :(';
+    if (!amount) return 'there are no contributors... :(';
 
     for (let i = 0; i < amount; i++) {
       const contributor = contributors[i];
@@ -133,7 +166,7 @@ class Modal {
     const amount = pulls.length;
     let template = '';
 
-    if (!amount) return 'there is no pulls... :(';
+    if (!amount) return 'there are no pulls... :(';
 
     for (let i = 0; i < amount; i++) {
       const pull = pulls[i];
