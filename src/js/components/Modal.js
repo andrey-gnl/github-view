@@ -21,6 +21,9 @@ BODY.addEventListener('click', function(e) {
     e.preventDefault();
   }
 });
+BODY.addEventListener('keyup', function(e) {
+  e.keyCode === 27 && Modal.exists && Modal.closeModal();
+});
 
 class Modal {
   constructor(repo = {}, target) {
@@ -49,13 +52,15 @@ class Modal {
         Object.assign(data, { pulls: pulls.reverse() });
         target.classList.remove('loading');
         Modal.loading = false;
+        Modal.exists = true;
         BODY.insertAdjacentHTML('beforeEnd', this._getModal(data));
+
       })
       .catch(function(error) {
         target.classList.remove('loading');
-        console.dir(error);
+        console.log(error);
         Modal.loading = false;
-
+        Modal.exists = false;
       });
   }
 
@@ -68,6 +73,7 @@ class Modal {
         <svg viewBox="0 0 40 40">
           <path class="close-x" d="M 10,10 L 30,30 M 30,10 L 10,30"></path>
         </svg>
+        esc
       </button>
     </div>
 
@@ -141,6 +147,7 @@ class Modal {
 Modal.closeModal = () => {
   const modal = document.getElementById('modal');
   modal.remove();
+  Modal.exists = false;
 };
 
 export default Modal;
