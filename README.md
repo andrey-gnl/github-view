@@ -1,3 +1,5 @@
+https://andrey-gnl.github.io/kottans/
+
 #How to use
 
 Clone this repo and then in command line type:
@@ -14,14 +16,14 @@ To run separate task type in command line `gulp [task_name]`.
 Almost all tasks also have watch mode - `gulp [task_name]:watch`, but you don't need to use it directly.
 
 ### Main tasks
-Task name          | Description                                                      
+Task name          | Description
 :------------------|:----------------------------------
 `default`          | will start all tasks required by project in dev mode: initial build, watch files, run server with livereload
 `build:dev`        | build dev version of project (without code optimizations)
 `build`            | build production-ready project (with code optimizations)
 
 ### Other tasks
-Task name          | Description                                                      
+Task name          | Description
 :------------------|:----------------------------------
 `sass` 	         | compile .sass/.scss to .css. We also use [postcss](https://github.com/postcss/postcss) for [autoprefixer](https://github.com/postcss/autoprefixer) and [Lost](https://github.com/peterramsing/lost), so feel free to include other awesome postcss [plugins](https://github.com/postcss/postcss#plugins) when needed
 `webpack`          | compile .js sources into bundle file

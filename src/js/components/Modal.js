@@ -6,10 +6,13 @@ BODY.addEventListener('click', function(e) {
   const target = e.target;
 
   if (target.closest('.repo')) {
-    const id = e.target.closest('.repo').dataset.id;
-    const repo = state.cards.find(el => +el.id === +id);
+    if(!Modal.loading) {
+      const id = e.target.closest('.repo').dataset.id;
+      const repo = state.cards.find(el => +el.id === +id);
 
-    new Modal(repo);
+      new Modal(repo, e.target.closest('.repo'));
+    }
+
     e.preventDefault();
   }
 
@@ -20,8 +23,11 @@ BODY.addEventListener('click', function(e) {
 });
 
 class Modal {
-  constructor(repo = {}) {
+  constructor(repo = {}, target) {
     const data = {};
+    target.classList.add('loading');
+
+    Modal.loading = true;
 
     fetch(`https://api.github.com/repos/${state.ownerName}/${repo.name}`)
       .then(handleErrors)
@@ -35,17 +41,21 @@ class Modal {
       .then((response) => response.json())
       .then((contributors) => {
         Object.assign(data, { contributors });
-        return fetch(`https://api.github.com/repos/${state.ownerName}/${repo.name}/pulls?sort=popularity`);
+        return fetch(`https://api.github.com/repos/${state.ownerName}/${repo.name}/pulls?sort=popularity&per_page=5&type=open`);
       })
       .then(handleErrors)
       .then((response) => response.json())
       .then((pulls) => {
         Object.assign(data, { pulls: pulls.reverse() });
-
+        target.classList.remove('loading');
+        Modal.loading = false;
         BODY.insertAdjacentHTML('beforeEnd', this._getModal(data));
       })
-      .catch(function() {
-        console.info('error with repository access');
+      .catch(function(error) {
+        target.classList.remove('loading');
+        console.dir(error);
+        Modal.loading = false;
+
       });
   }
 
@@ -114,7 +124,7 @@ class Modal {
   }
 
   _getPulls(pulls) {
-    const amount = pulls.length >= 5 ? 5 : pulls.length;
+    const amount = pulls.length;
     let template = '';
 
     if (!amount) return 'there is no pulls... :(';

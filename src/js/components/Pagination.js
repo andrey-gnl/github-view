@@ -24,25 +24,30 @@ class Pagination {
     return this._isExists;
   }
 
-  _makeDisable() {
+  makeDisable() {
+    if(this._disabled) return;
+
     this._button.setAttribute('disabled', '');
     this._disabled = true;
   }
 
-  _makeActive() {
+  makeActive() {
+    if(!this._disabled) return;
+
     this._button.removeAttribute('disabled');
     this._disabled = false;
   }
 
   _handleClick() {
 
-    this._makeDisable();
+    this.makeDisable();
 
     let myHeaders = new Headers({
       'Accept': 'application/vnd.github.mercy-preview+json'
     });
+    this._button.classList.add('loading');
 
-    fetch(`https://api.github.com/users/${state.ownerName}/repos?page=${state.page + 1}`, {
+    fetch(`https://api.github.com/users/${state.ownerName}/repos?page=${state.page + 1}&per_page=50`, {
       headers: myHeaders
     })
       .then((response) => response.json())
@@ -61,8 +66,9 @@ class Pagination {
         } else {
           repoList.addMoreRepos(newCards);
         }
-        this._makeActive();
+        newCards.length > 50 && this.makeActive();
         state.page++;
+        this._button.classList.remove('loading');
       });
   }
 
